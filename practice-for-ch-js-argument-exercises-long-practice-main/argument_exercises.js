@@ -61,13 +61,36 @@ Function.prototype.myBind = function(ctx, ...bArgs) {
 // let a = markov.says.myBind(pavlov, "meow", "Kush");
 // a();
 
+Function.prototype.myBind2 = function(ctx) {
+    bArgs = Array.from(arguments).slice(1)
+    let that = this;
+    return function() {
+        cArgs = Array.from(arguments);
+        return that.apply(ctx, bArgs.concat(cArgs));
+    };
+};
 
-
-markov.says.myBind(pavlov)("meow", "a tree");
-markov.says.myBind(pavlov, "meow")("Markov");
+markov.says.myBind2(pavlov)("meow", "a tree");
+markov.says.myBind2(pavlov, "meow")("Markov");
 // Pavlov says meow to Markov!
 // true
 
 // no bind time args (other than context), call time args are "meow" and "me"
-const notMarkovSays = markov.says.myBind(pavlov);
+const notMarkovSays = markov.says.myBind2(pavlov);
 notMarkovSays("meow", "me");
+
+function curriedSum(numArgs) {
+    let numbers = [];
+    return function _curriedSum(num) {
+        numbers.push(num);
+        if (numbers.length === numArgs) {
+            numbers.reduce(function(acc, el) {
+                acc + el
+            }) 
+        } else {
+            return _curriedSum;
+        };
+    };
+};
+const sum4 = curriedSum(4);
+sum4(5)(30)(20)(1); // => 56
