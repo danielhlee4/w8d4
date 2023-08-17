@@ -84,13 +84,36 @@ function curriedSum(numArgs) {
     return function _curriedSum(num) {
         numbers.push(num);
         if (numbers.length === numArgs) {
-            numbers.reduce(function(acc, el) {
-                acc + el
-            }) 
+            let result = numbers.reduce(function(acc, el) {
+                return acc + el;
+            });
+            console.log(result);
         } else {
             return _curriedSum;
         };
     };
 };
 const sum4 = curriedSum(4);
-sum4(5)(30)(20)(1); // => 56
+// sum4(5)(30)(20)(1); // => 56
+
+Function.prototype.curry = function(numArgs) {
+    let args = [];
+    let that = this;
+    return function _curry(arg) {
+        args.push(arg);
+        if (args.length === numArgs) {
+            let result = args.reduce(function(acc, el) {
+                return acc + el;
+            });
+            console.log(result);
+        } else {
+            return that.curry.apply(that, args);
+        };
+    };
+};
+
+function sumThree(num1, num2, num3) {
+    return num1 + num2 + num3;
+}
+
+sumThree.curry(3)(4)(20)(6); // == 30
